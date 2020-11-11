@@ -87,11 +87,9 @@ app.post('/signup', (req, res) => {
       } else {
         models.Users.create(req.body)
           .then(userData => {
-            console.log('Signup success: ', userData);
             res.redirect('/');
           })
           .catch(error => {
-            console.log('Signup Error: ', error);
             res.status(500).send(error);
           });
       }
@@ -104,14 +102,12 @@ app.post('/login', (req, res) => {
   models.Users.get({username})
     .then(userData => {
       if (userData) {
-        console.log(userData);
         if (models.Users.compare(password, userData.password, userData.salt)) {
           models.Sessions.create()
             .then(userData => {
               res.redirect('/');
             })
             .catch(error => {
-              console.log('login error in compare: ', error);
               res.status(500).send(error);
             });
         } else {
@@ -122,7 +118,6 @@ app.post('/login', (req, res) => {
       }
     })
     .catch(error => {
-      console.log('Login error for get user: ', error);
       res.status(500).send(error);
     });
   // models.Users.compare();
