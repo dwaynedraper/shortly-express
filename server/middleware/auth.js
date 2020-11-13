@@ -3,11 +3,11 @@ const Promise = require('bluebird');
 
 module.exports.createSession = (req, res, next) => {
   if (req.cookies.shortlyid === undefined) {
-    models.Sessions.create().
-      then((sessionPromise) => {
+    models.Sessions.create()
+      .then((sessionPromise) => {
         let id = sessionPromise.insertId;
-        models.Sessions.get({id}).
-          then((session) => {
+        models.Sessions.get({id})
+          .then((session) => {
             req.session = session;
             res.cookie('shortlyid', session.hash);
             next();

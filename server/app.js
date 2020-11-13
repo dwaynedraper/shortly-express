@@ -4,6 +4,7 @@ const utils = require('./lib/hashUtils');
 const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
+const cookieParser = require('./middleware/cookieParser');
 const models = require('./models');
 
 const app = express();
@@ -14,6 +15,8 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(cookieParser);
+app.use(Auth.createSession);
 
 
 
@@ -103,13 +106,23 @@ app.post('/login', (req, res) => {
     .then(userData => {
       if (userData) {
         if (models.Users.compare(password, userData.password, userData.salt)) {
-          models.Sessions.create()
-            .then(userData => {
+          console.log('In login, id: ', userData.id);
+          console.log('In login, hash: ', req.session.hash);
+          models.Sessions.update({hash: req.session.hash}, {userId: userData.id})
+            .then((data) => {
+              console.log('After update: ', data);
               res.redirect('/');
             })
-            .catch(error => {
+            .catch((error) => {
               res.status(500).send(error);
             });
+          // models.Sessions.create()
+          //   .then(userData => {
+          //     res.redirect('/');
+          //   })
+          //   .catch(error => {
+          //     res.status(500).send(error);
+          //   });
         } else {
           res.redirect('/login');
         }
