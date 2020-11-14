@@ -88,14 +88,19 @@ app.post('/signup', (req, res) => {
       if (userData) {
         res.redirect('/signup');
       } else {
-        models.Users.create(req.body)
-          .then(userData => {
-            res.redirect('/');
-          })
-          .catch(error => {
-            res.status(500).send(error);
-          });
+        return models.Users.create(req.body);
       }
+    })
+    .then(userData => {
+      req.session.userId = userData.insertId;
+
+      return models.Sessions.update({hash: req.session.hash}, {userId: userData.insertId});
+    })
+    .then((data) => {
+      res.redirect('/');
+    })
+    .catch((error) => {
+      // res.status(500).send(error);
     });
 });
 
@@ -106,11 +111,9 @@ app.post('/login', (req, res) => {
     .then(userData => {
       if (userData) {
         if (models.Users.compare(password, userData.password, userData.salt)) {
-          console.log('In login, id: ', userData.id);
-          console.log('In login, hash: ', req.session.hash);
           models.Sessions.update({hash: req.session.hash}, {userId: userData.id})
             .then((data) => {
-              console.log('After update: ', data);
+              req.session.userId = userData.id;
               res.redirect('/');
             })
             .catch((error) => {

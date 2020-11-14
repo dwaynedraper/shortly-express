@@ -226,7 +226,6 @@ describe('', function() {
     });
 
     it('Logs in existing users', function(done) {
-      console.log('8');
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/login',
@@ -244,7 +243,6 @@ describe('', function() {
     });
 
     it('Users that do not exist are kept on login page', function(done) {
-      console.log('9');
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/login',
@@ -262,7 +260,6 @@ describe('', function() {
     });
 
     it('Users that enter an incorrect password are kept on login page', function(done) {
-      console.log('10');
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/login',
